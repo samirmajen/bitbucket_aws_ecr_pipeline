@@ -1,0 +1,15 @@
+options:
+  docker: true
+
+pipelines:
+  default:
+    - step:
+        script:
+          - curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+          - unzip awscli-bundle.zip
+          - ./awscli-bundle/install -b ~/bin/aws
+          - export PATH=~/bin:$PATH
+          - export IMAGE_NAME=$AWS_ECR_NAME.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$PROJECT_NAME:$BITBUCKET_COMMIT
+          - eval $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email | sed 's|https://||')
+          - docker build -t $IMAGE_NAME .
+          - docker push $IMAGE_NAME
