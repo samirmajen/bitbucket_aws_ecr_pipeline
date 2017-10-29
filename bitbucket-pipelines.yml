@@ -9,7 +9,7 @@ pipelines:
           - unzip awscli-bundle.zip
           - ./awscli-bundle/install -b ~/bin/aws
           - export PATH=~/bin:$PATH
-          - export IMAGE_NAME=$AWS_ECR_NAME.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$AWS_PROJECT_NAME:$BITBUCKET_COMMIT
           - eval $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email | sed 's|https://||')
-          - docker build -t $IMAGE_NAME .
-          - docker push $IMAGE_NAME
+          - docker build -t $AWS_PROJECT_NAME:$BITBUCKET_COMMIT .
+          - docker tag $AWS_PROJECT_NAME:$BITBUCKET_COMMIT $AWS_ECR_NAME.dkr.ecr.eu-west-2.amazonaws.com/$AWS_PROJECT_NAME:$BITBUCKET_COMMIT
+          - docker push $AWS_ECR_NAME.dkr.ecr.eu-west-2.amazonaws.com/$AWS_PROJECT_NAME:$BITBUCKET_COMMIT
